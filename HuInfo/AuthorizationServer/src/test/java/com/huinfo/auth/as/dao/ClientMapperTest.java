@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.huinfo.auth.as.model.Client;
-import com.huinfo.auth.as.model.ClientExample;
 import com.huinfo.auth.as.utils.SecretDigest;
 import com.huinfo.auth.as.utils.StringTools;
 import org.apache.commons.codec.digest.DigestUtils;
