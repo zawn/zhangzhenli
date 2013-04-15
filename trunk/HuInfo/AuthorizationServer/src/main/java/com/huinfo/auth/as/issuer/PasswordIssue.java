@@ -16,13 +16,11 @@
 
 package com.huinfo.auth.as.issuer;
 
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.huinfo.auth.as.dao.DBSessionFactory;
 import com.huinfo.auth.as.dao.ResourceOwnMapper;
 import com.huinfo.auth.as.model.ResourceOwn;
-import com.huinfo.auth.as.model.ResourceOwnExample;
 import com.huinfo.auth.as.utils.SecretDigest;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
@@ -54,11 +52,8 @@ public class PasswordIssue extends OAuthIssue {
         try {
             clientValidator(sqlSession);
             ResourceOwnMapper mapper = sqlSession.getMapper(ResourceOwnMapper.class);
-            ResourceOwnExample condition = new ResourceOwnExample();
-            condition.createCriteria().andUsernameEqualTo(userName);
-            List<ResourceOwn> list = mapper.selectByExample(condition);
-            if (!list.isEmpty()) {
-                ResourceOwn resourceOwn = list.get(0);
+            ResourceOwn resourceOwn = mapper.selectByUserName(userName);
+            if (resourceOwn != null) {
                 String digestClient = SecretDigest.digestClient(password);
                 if (digestClient != null && digestClient.equals(resourceOwn.getPassword())) {
                     userID = resourceOwn.getUsername();

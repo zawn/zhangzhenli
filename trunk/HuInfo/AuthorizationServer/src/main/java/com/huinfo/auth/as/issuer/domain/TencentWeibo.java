@@ -24,7 +24,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -33,7 +32,6 @@ import javax.net.ssl.HttpsURLConnection;
 import com.huinfo.auth.as.dao.DBSessionFactory;
 import com.huinfo.auth.as.dao.ResourceOwnInfoMapper;
 import com.huinfo.auth.as.model.ResourceOwnInfo;
-import com.huinfo.auth.as.model.ResourceOwnInfoExample;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -43,6 +41,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthRuntimeException;
 import org.apache.oltu.oauth2.common.utils.OAuthUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import sun.net.www.protocol.https.HttpsURLConnectionImpl;
 
 /**
  *
@@ -99,10 +98,8 @@ public class TencentWeibo extends TrustedValidator {
         SqlSession sqlSession = DBSessionFactory.getSession();
         try {
             ResourceOwnInfoMapper mapper = sqlSession.getMapper(ResourceOwnInfoMapper.class);
-            ResourceOwnInfoExample condition = new ResourceOwnInfoExample();
-            condition.createCriteria().andUseridEqualTo(trustedUid);
-            List<ResourceOwnInfo> list = mapper.selectByExample(condition);
-            if (!list.isEmpty()) {
+            ResourceOwnInfo owninfo = mapper.selectByUserID(trustedUid);
+            if (owninfo == null) {
                 return;
             } else {
                 jsonObject.put(OAuth.OAUTH_TRUSTED_TOKEN, trustedToken);

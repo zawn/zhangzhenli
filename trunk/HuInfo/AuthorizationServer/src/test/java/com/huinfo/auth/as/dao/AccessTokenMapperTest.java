@@ -16,11 +16,11 @@
 
 package com.huinfo.auth.as.dao;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import com.huinfo.auth.as.model.AccessToken;
-import com.huinfo.auth.as.model.AccessTokenExample;
 import com.huinfo.auth.as.pojo.BaseAccessToken;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
@@ -63,48 +63,6 @@ public class AccessTokenMapperTest {
     }
 
     /**
-     * Test of countByExample method, of class AccessTokenMapper.
-     */
-    public void testCountByExample() {
-        System.out.println("countByExample");
-        AccessTokenExample example = null;
-        AccessTokenMapper instance = new AccessTokenMapperImpl();
-        int expResult = 0;
-        int result = instance.countByExample(example);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of deleteByExample method, of class AccessTokenMapper.
-     */
-    public void testDeleteByExample() {
-        System.out.println("deleteByExample");
-        AccessTokenExample example = null;
-        AccessTokenMapper instance = new AccessTokenMapperImpl();
-        int expResult = 0;
-        int result = instance.deleteByExample(example);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of deleteByPrimaryKey method, of class AccessTokenMapper.
-     */
-    public void testDeleteByPrimaryKey() {
-        System.out.println("deleteByPrimaryKey");
-        Long id = null;
-        AccessTokenMapper instance = new AccessTokenMapperImpl();
-        int expResult = 0;
-        int result = instance.deleteByPrimaryKey(id);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of insert method, of class AccessTokenMapper.
      */
     @Test
@@ -125,20 +83,6 @@ public class AccessTokenMapperTest {
             sqlSession.close();
         }
         System.out.println(record);
-    }
-
-    /**
-     * Test of insertSelective method, of class AccessTokenMapper.
-     */
-    public void testInsertSelective() {
-        System.out.println("insertSelective");
-        AccessToken record = null;
-        AccessTokenMapper instance = new AccessTokenMapperImpl();
-        int expResult = 0;
-        int result = instance.insertSelective(record);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -174,20 +118,6 @@ public class AccessTokenMapperTest {
     }
 
     /**
-     * Test of selectByPrimaryKey method, of class AccessTokenMapper.
-     */
-    public void testSelectByPrimaryKey() {
-        System.out.println("selectByPrimaryKey");
-        Long id = null;
-        AccessTokenMapper instance = new AccessTokenMapperImpl();
-        AccessToken expResult = null;
-        AccessToken result = instance.selectByPrimaryKey(id);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of updateByExampleSelective method, of class AccessTokenMapper.
      */
     public void testUpdateByRefreshTokenSelective() {
@@ -210,107 +140,65 @@ public class AccessTokenMapperTest {
     }
 
     /**
-     * Test of updateByExample method, of class AccessTokenMapper.
+     * Test of deleteByPrimaryKey method, of class AccessTokenMapper.
      */
-    public void testUpdateByExample() {
-        System.out.println("updateByExample");
-        AccessToken record = null;
-        AccessTokenExample example = null;
-        AccessTokenMapper instance = new AccessTokenMapperImpl();
-        int expResult = 0;
-        int result = instance.updateByExample(record, example);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    @Test
+    public void testDeleteByPrimaryKey() {
+    }
+
+    /**
+     * Test of insertSelective method, of class AccessTokenMapper.
+     */
+    @Test
+    public void testInsertSelective() {
+    }
+
+    /**
+     * Test of selectByPrimaryKey method, of class AccessTokenMapper.
+     */
+    @Test
+    public void testSelectByPrimaryKey() {
+    }
+
+    /**
+     * Test of selectByClientId method, of class AccessTokenMapper.
+     */
+    @Test
+    public void testSelectByClientId() {
+        System.out.println("testSelectByClientId");
+        SqlSession sqlSession = DBSessionFactory.getSession();
+        try {
+            AccessTokenMapper mapper = sqlSession.getMapper(AccessTokenMapper.class);
+            List<AccessToken> record = mapper.selectByClientId("99998");
+            System.out.println(record.toString());
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    /**
+     * Test of selectByClientIdandUserId method, of class AccessTokenMapper.
+     */
+    @Test
+    public void testSelectByClientIdandUserId() {
+         System.out.println("testSelectByClientIdandUserId");
+        SqlSession sqlSession = DBSessionFactory.getSession();
+        try {
+            AccessTokenMapper mapper = sqlSession.getMapper(AccessTokenMapper.class);
+            AccessToken at = new AccessToken();
+            at.setClientId(99998L);
+            at.setResourceownerid("test");
+            List<AccessToken> record = mapper.selectByClientIdandUserId(at);
+            System.out.println(record.toString());
+        } finally {
+            sqlSession.close();
+        }
     }
 
     /**
      * Test of updateByPrimaryKeySelective method, of class AccessTokenMapper.
      */
+    @Test
     public void testUpdateByPrimaryKeySelective() {
-        System.out.println("updateByPrimaryKeySelective");
-        AccessToken record = null;
-        AccessTokenMapper instance = new AccessTokenMapperImpl();
-        int expResult = 0;
-        int result = instance.updateByPrimaryKeySelective(record);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of updateByPrimaryKey method, of class AccessTokenMapper.
-     */
-    public void testUpdateByPrimaryKey() {
-        System.out.println("updateByPrimaryKey");
-        AccessToken record = null;
-        AccessTokenMapper instance = new AccessTokenMapperImpl();
-        int expResult = 0;
-        int result = instance.updateByPrimaryKey(record);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    public class AccessTokenMapperImpl implements AccessTokenMapper {
-
-        public int countByExample(AccessTokenExample example) {
-            return 0;
-        }
-
-        public int deleteByExample(AccessTokenExample example) {
-            return 0;
-        }
-
-        public int deleteByPrimaryKey(Long id) {
-            return 0;
-        }
-
-        public int insert(AccessToken record) {
-            return 0;
-        }
-
-        public int insertSelective(AccessToken record) {
-            return 0;
-        }
-
-        public List<AccessToken> selectByExample(AccessTokenExample example) {
-            return null;
-        }
-
-        public AccessToken selectByPrimaryKey(Long id) {
-            return null;
-        }
-
-        public int updateByExampleSelective(AccessToken record, AccessTokenExample example) {
-            return 0;
-        }
-
-        public int updateByExample(AccessToken record, AccessTokenExample example) {
-            return 0;
-        }
-
-        public int updateByPrimaryKeySelective(AccessToken record) {
-            return 0;
-        }
-
-        public int updateByPrimaryKey(AccessToken record) {
-            return 0;
-        }
-
-        @Override
-        public AccessToken selectByRefreshToken(String refreshToken) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public AccessToken selectByAccessToken(String accessToken) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public int updateByRefreshTokenSelective(AccessToken record) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
     }
 }

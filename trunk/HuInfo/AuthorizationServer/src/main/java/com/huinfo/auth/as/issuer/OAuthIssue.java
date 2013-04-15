@@ -27,7 +27,6 @@ import com.huinfo.auth.as.dao.AccesstokenScopesMapper;
 import com.huinfo.auth.as.dao.ClientMapper;
 import com.huinfo.auth.as.dao.DBSessionFactory;
 import com.huinfo.auth.as.model.AccessToken;
-import com.huinfo.auth.as.model.AccessTokenExample;
 import com.huinfo.auth.as.model.AccesstokenScopes;
 import com.huinfo.auth.as.model.Client;
 import com.huinfo.auth.as.pojo.BaseAccessToken;
@@ -98,13 +97,15 @@ public abstract class OAuthIssue {
         AccessToken accessToken = null;
         try {
             AccessTokenMapper mapper = sqlSession.getMapper(AccessTokenMapper.class);
-            AccessTokenExample condition = new AccessTokenExample();
+            List<AccessToken> list;
             if (userID == null) {
-                condition.createCriteria().andClientIdEqualTo(clientID);
+                list = mapper.selectByClientId(clientId);
             } else {
-                condition.createCriteria().andClientIdEqualTo(clientID).andResourceowneridEqualTo(userID);
+                AccessToken atemp = new AccessToken();
+                atemp.setClientId(clientID);
+                atemp.setResourceownerid(clientId);
+                list = mapper.selectByClientIdandUserId(atemp);
             }
-            List<AccessToken> list = mapper.selectByExample(condition);
             if (!list.isEmpty()) {
                 for (Iterator<AccessToken> it = list.iterator(); it.hasNext();) {
                     accessToken = it.next();
@@ -142,8 +143,6 @@ public abstract class OAuthIssue {
             AccessTokenMapper mapper = sqlSession.getMapper(AccessTokenMapper.class);
             if (at instanceof AccessToken) {
                 AccessToken accessToken = (AccessToken) at;
-                AccessTokenExample condition = new AccessTokenExample();
-                condition.createCriteria().andClientIdEqualTo(clientID).andResourceowneridEqualTo(userID);
                 AccessToken record = new AccessToken();
                 record.setModificationdate(new Date());
                 record.setGrantType(grantType);

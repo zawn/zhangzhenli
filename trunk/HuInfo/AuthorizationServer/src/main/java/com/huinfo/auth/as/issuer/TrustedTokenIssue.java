@@ -18,7 +18,14 @@ package com.huinfo.auth.as.issuer;
 
 import java.util.HashMap;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.log4j.Logger;
+import org.apache.oltu.oauth2.common.OAuth;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
 
 import com.huinfo.auth.as.dao.DBSessionFactory;
 import com.huinfo.auth.as.dao.TrustedDomainMapper;
@@ -27,12 +34,6 @@ import com.huinfo.auth.as.issuer.domain.TencentWeibo;
 import com.huinfo.auth.as.issuer.domain.TrustedDomainType;
 import com.huinfo.auth.as.issuer.domain.TrustedValidator;
 import com.huinfo.auth.as.model.TrustedDomain;
-import com.huinfo.auth.as.model.TrustedDomainExample;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
-import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
 
 /**
  *
@@ -66,10 +67,11 @@ public class TrustedTokenIssue extends OAuthIssue {
         SqlSession sqlSession = DBSessionFactory.getSession();
         try {
             clientValidator(sqlSession);
-            TrustedDomainExample example = new TrustedDomainExample();
-            example.createCriteria().andClientidEqualTo(clientID).andDomainEqualTo(trustedDomain);
+            TrustedDomain tee = new TrustedDomain();
+            tee.setClientid(clientID);
+            tee.setDomain(this.trustedDomain);
             TrustedDomainMapper instance = sqlSession.getMapper(TrustedDomainMapper.class);
-            List<TrustedDomain> result = instance.selectByExample(example);
+            List<TrustedDomain> result = instance.selectClientIDandTrustedDomain(tee);
             HashMap<String, Object> hashMap = new HashMap<String, Object>();
             for (TrustedDomain td : result) {
                 hashMap.put(td.getAttributeName(), td.getAttributeValue());

@@ -24,22 +24,15 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import com.huinfo.auth.as.dao.DBSessionFactory;
 import com.huinfo.auth.as.dao.ResourceOwnInfoMapper;
 import com.huinfo.auth.as.model.ResourceOwnInfo;
-import com.huinfo.auth.as.model.ResourceOwnInfoExample;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.error.OAuthError;
@@ -124,10 +117,8 @@ public class SinaWeibo extends TrustedValidator {
         SqlSession sqlSession = DBSessionFactory.getSession();
         try {
             ResourceOwnInfoMapper mapper = sqlSession.getMapper(ResourceOwnInfoMapper.class);
-            ResourceOwnInfoExample condition = new ResourceOwnInfoExample();
-            condition.createCriteria().andUseridEqualTo(trustedUid);
-            List<ResourceOwnInfo> list = mapper.selectByExample(condition);
-            if (!list.isEmpty()) {
+             ResourceOwnInfo owninfo = mapper.selectByUserID(trustedUid);
+            if (owninfo == null) {
                 return;
             } else {
                 jsonObject.put(OAuth.OAUTH_TRUSTED_TOKEN, trustedToken);

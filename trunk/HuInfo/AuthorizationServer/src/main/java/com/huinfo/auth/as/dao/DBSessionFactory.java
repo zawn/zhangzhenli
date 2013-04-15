@@ -15,8 +15,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
@@ -100,7 +98,7 @@ public class DBSessionFactory {
                     ScriptRunner runner = new ScriptRunner(connection);
                     runner.runScript(Resources.getResourceAsReader(sqlFile));
                 } catch (IOException ex1) {
-                    logger.error(null, ex);
+                    logger.error(null, ex1);
                 }
             }
         } catch (SQLException ex) {
