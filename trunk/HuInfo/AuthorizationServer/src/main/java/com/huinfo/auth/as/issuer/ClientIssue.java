@@ -42,7 +42,7 @@ public class ClientIssue extends OAuthIssue {
 
     protected static final Logger logger = Logger.getLogger(ClientIssue.class);
 
-    public ClientIssue(HttpServletRequest request) {
+    public ClientIssue(HttpServletRequest request) throws OAuthProblemException {
         super(request,GrantType.CLIENT_CREDENTIALS);
     }
 

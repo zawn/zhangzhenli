@@ -28,11 +28,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import com.huinfo.auth.as.dao.DBSessionFactory;
 import com.huinfo.auth.as.dao.ResourceOwnInfoMapper;
 import com.huinfo.auth.as.model.ResourceOwnInfo;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.error.OAuthError;
@@ -62,23 +68,12 @@ public class SinaWeibo extends TrustedValidator {
             Map<String, Object> attrib = new HashMap<String, Object>();
             attrib.put("access_token", trustedToken);
             String queryString = OAuthUtils.format(attrib.entrySet(), "UTF-8");
-            System.out.println(verifyURL + "?" + queryString);
-            URL url = new URL(verifyURL);
-            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setDoOutput(true);
-            urlConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            OutputStream outputStream = urlConnection.getOutputStream();
-            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outputStream)));
-            out.write(queryString);
-            out.flush();
-            int statusCode = urlConnection.getResponseCode();
-            if (statusCode == 200) {
-                InputStream in = urlConnection.getInputStream();
-                String response = OAuthUtils.saveStreamAsString(in);
-                logger.info(response);
-                in.close();
-                JSONObject jsonObject = new JSONObject(response);
+            Map<String, String> header = new HashMap<String, String>(1);
+            header.put("Content-Type", "application/x-www-form-urlencoded");
+            String httpContent = getHttpContent(verifyURL, header, queryString);
+            if (httpContent != null) {
+                logger.info(httpContent);
+                JSONObject jsonObject = new JSONObject(httpContent);
                 long jsUID = jsonObject.getLong("uid");
                 String jsAppKey = jsonObject.getString("appkey");
                 long jsCreateAt = jsonObject.getLong("create_at");
@@ -99,8 +94,6 @@ public class SinaWeibo extends TrustedValidator {
             } else {
                 throw OAuthProblemException.error(OAuthError.TokenResponse.INVALID_GRANT);
             }
-            out.close();
-            urlConnection.disconnect();
         } catch (JSONException ex) {
             logger.error(null, ex);
             throw new OAuthRuntimeException(ex);
@@ -117,8 +110,8 @@ public class SinaWeibo extends TrustedValidator {
         SqlSession sqlSession = DBSessionFactory.getSession();
         try {
             ResourceOwnInfoMapper mapper = sqlSession.getMapper(ResourceOwnInfoMapper.class);
-             ResourceOwnInfo owninfo = mapper.selectByUserID(trustedUid);
-            if (owninfo == null) {
+            ResourceOwnInfo owninfo = mapper.selectByUserID(trustedUid);
+            if (owninfo != null) {
                 return;
             } else {
                 jsonObject.put(OAuth.OAUTH_TRUSTED_TOKEN, trustedToken);
@@ -146,17 +139,10 @@ public class SinaWeibo extends TrustedValidator {
             attrib.put("uid", trustedUid);
             String queryString = OAuthUtils.format(attrib.entrySet(), "UTF-8");
             final String urlString = userInfoURL + "?" + queryString;
-            logger.info(urlString);
-            URL url = new URL(urlString);
-            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            int statusCode = urlConnection.getResponseCode();
-            if (statusCode == 200) {
-                InputStream in = urlConnection.getInputStream();
-                String response = OAuthUtils.saveStreamAsString(in);
-                logger.info(response);
-                in.close();
-                JSONObject dateJSONObject = new JSONObject(response);
+            String content = getHttpContent(urlString);
+            if (content != null) {
+                logger.info(content);
+                JSONObject dateJSONObject = new JSONObject(content);
                 jsonObject.append("data", dateJSONObject);
                 info.setExt(jsonObject.toString());
                 info.setNickname(dateJSONObject.getString("screen_name"));
@@ -175,5 +161,48 @@ public class SinaWeibo extends TrustedValidator {
             ex.printStackTrace();
         }
         return info;
+    }
+
+    private String getHttpContent(String httpUrl)
+            throws IOException, OAuthProblemException {
+        logger.info("SinaWeibo.getHttpContent(): HttpURL = " + httpUrl);
+        String content = null;
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpUriRequest request = new HttpGet(httpUrl);
+        HttpResponse response = httpClient.execute(request);
+        int sc = response.getStatusLine().getStatusCode();
+        if (sc == 200) {
+            HttpEntity httpEntity = response.getEntity();
+            InputStream inputStream = httpEntity.getContent();
+            content = OAuthUtils.saveStreamAsString(inputStream);
+        } else if (sc == 401) {
+            throw OAuthProblemException.error(OAuthError.TokenResponse.INVALID_GRANT);
+        } else {
+            throw new IOException("Unable to get remote data.");
+        }
+        return content;
+    }
+
+    private String getHttpContent(String httpUrl, Map<String, String> header, String postBody)
+            throws IOException {
+        logger.info("SinaWeibo.getHttpContent(): HttpURL = " + httpUrl + "\n postBody = " + postBody);
+        String content = null;
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpPost request = new HttpPost(httpUrl);
+        for (Map.Entry<String, String> entry : header.entrySet()) {
+            request.addHeader(entry.getKey(), entry.getValue());
+        }
+        HttpEntity body = new StringEntity(postBody, "UTF-8");
+        request.setEntity(body);
+        HttpResponse response = httpClient.execute(request);
+        int sc = response.getStatusLine().getStatusCode();
+        if (sc == 200) {
+            HttpEntity httpEntity = response.getEntity();
+            InputStream inputStream = httpEntity.getContent();
+            content = OAuthUtils.saveStreamAsString(inputStream);
+        } else {
+            throw new IOException("Unable to get remote data.");
+        }
+        return content;
     }
 }
