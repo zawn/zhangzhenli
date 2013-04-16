@@ -29,9 +29,12 @@ import java.util.TimeZone;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import com.huinfo.auth.as.dao.DBSessionFactory;
-import com.huinfo.auth.as.dao.ResourceOwnInfoMapper;
-import com.huinfo.auth.as.model.ResourceOwnInfo;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -41,7 +44,10 @@ import org.apache.oltu.oauth2.common.exception.OAuthRuntimeException;
 import org.apache.oltu.oauth2.common.utils.OAuthUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import sun.net.www.protocol.https.HttpsURLConnectionImpl;
+
+import com.huinfo.auth.as.dao.DBSessionFactory;
+import com.huinfo.auth.as.dao.ResourceOwnInfoMapper;
+import com.huinfo.auth.as.model.ResourceOwnInfo;
 
 /**
  *
@@ -49,10 +55,12 @@ import sun.net.www.protocol.https.HttpsURLConnectionImpl;
  */
 public class TencentWeibo extends TrustedValidator {
 
-    protected static final Logger logger = Logger.getLogger(TrustedValidator.class);
+    protected static final Logger logger = Logger
+            .getLogger(TrustedValidator.class);
     private static final String verifyURL = "https://open.t.qq.com/api/user/info";
 
-    public TencentWeibo(String trustedDomain, String trustedToken, String trustedUid, Long clientID) {
+    public TencentWeibo(String trustedDomain, String trustedToken,
+            String trustedUid, Long clientID) {
         super(trustedDomain, trustedToken, trustedUid, clientID);
     }
 
@@ -67,18 +75,15 @@ public class TencentWeibo extends TrustedValidator {
             attrib.put("openid", trustedUid);
             attrib.put("oauth_version", "2.a");
             String queryString = OAuthUtils.format(attrib.entrySet(), "UTF-8");
-            System.out.println(verifyURL + "?" + queryString);
-            URL url = new URL(verifyURL + "?" + queryString);
-            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-            InputStream in = urlConnection.getInputStream();
-            String response = OAuthUtils.saveStreamAsString(in);
-            in.close();
-            urlConnection.disconnect();
+            String httpUrl = verifyURL + "?" + queryString;
+            System.out.println(httpUrl);
+            String response = getHttpContent(httpUrl);
             logger.info(response);
             JSONObject jSONObject = new JSONObject(response);
             int ret = jSONObject.getInt("ret");
             if (ret != 0) {
-                throw OAuthProblemException.error(OAuthError.TokenResponse.INVALID_GRANT);
+                throw OAuthProblemException
+                        .error(OAuthError.TokenResponse.INVALID_GRANT);
             } else {
                 saveUserInfo(jSONObject);
             }
@@ -94,12 +99,88 @@ public class TencentWeibo extends TrustedValidator {
         }
     }
 
+    private String getHttpContent(String httpUrl)
+            throws IOException {
+        logger.info("TencentWeibo.getHttpContent(): HttpURL = " + httpUrl);
+        String content = null;
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpUriRequest request = new HttpGet(httpUrl);
+        HttpResponse response = httpClient.execute(request);
+        int sc = response.getStatusLine().getStatusCode();
+        if (sc == 200) {
+            HttpEntity httpEntity = response.getEntity();
+            InputStream inputStream = httpEntity.getContent();
+            content = OAuthUtils.saveStreamAsString(inputStream);
+        } else {
+            throw new IOException("Unable to get remote data.");
+        }
+        return content;
+    }
+//    /**
+//     * @param httpUrl
+//     * @return
+//     * @throws IOException
+//     */
+//    private String getHttpContent(String httpUrl)
+//            throws IOException {
+//        String property = System.getProperty("java.vm.name");
+//        if (property.contains("Java HotSpot(TM)")) {
+//            return getHttpContentImpl(httpUrl);
+//        } else {
+//            return new BaeFetchURL().getHttpContent(httpUrl);
+//        }
+//    }
+//    /**
+//     * @param in
+//     * @return
+//     * @throws IOException
+//     */
+//    private String getHttpContentImpl(String httpUrl)
+//            throws IOException {
+//        URL url = new URL(httpUrl);
+//        HttpsURLConnection urlConnection = (HttpsURLConnection) url
+//                .openConnection();
+//        InputStream in = urlConnection.getInputStream();
+//        String response = OAuthUtils.saveStreamAsString(in);
+//        in.close();
+//        urlConnection.disconnect();
+//        return response;
+//    }
+
+//    private static class BaeFetchURL {
+//
+//        /**
+//         * @param in
+//         * @return
+//         * @throws IOException
+//         */
+//        private String getHttpContent(String httpUrl)
+//                throws IOException {
+//            String content = null;
+////             创建sdk对象
+//            BaeFetchurl fetch = BaeFactory.getBaeFetchurl();
+//            // 发起一次get请求
+//            fetch.get(httpUrl);
+//            // 获取http code
+//            int httpcode = fetch.getHttpCode();
+//            String content = null;
+//            if (httpcode == 200) {
+//                // 获取返回的包体数据
+//                content = fetch.getResponseBody();
+//            }
+//            // 获取返回的头部信息
+//            logger.info("TencentWeibo.BaeFetchURL.getHttpContent(): " + content);
+//            return content;
+//        }
+//    }
     private void saveUserInfo(JSONObject jsonObject) {
         SqlSession sqlSession = DBSessionFactory.getSession();
         try {
-            ResourceOwnInfoMapper mapper = sqlSession.getMapper(ResourceOwnInfoMapper.class);
+            ResourceOwnInfoMapper mapper = sqlSession
+                    .getMapper(ResourceOwnInfoMapper.class);
             ResourceOwnInfo owninfo = mapper.selectByUserID(trustedUid);
-            if (owninfo == null) {
+            if (owninfo != null) {
+                logger.info("164" + owninfo);
                 return;
             } else {
                 jsonObject.put(OAuth.OAUTH_TRUSTED_TOKEN, trustedToken);

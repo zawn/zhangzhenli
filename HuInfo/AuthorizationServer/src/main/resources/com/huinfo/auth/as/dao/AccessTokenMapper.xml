@@ -45,17 +45,17 @@
         from accesstoken
         where token = #{accessToken,jdbcType=VARCHAR}
     </select>
-    <select id="selectByClientId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    <select id="selectByClientId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
         select 
         <include refid="Base_Column_List" />
         from accesstoken
-        where client_id = #{clientId,jdbcType=VARCHAR}
+        where client_id = #{clientId,jdbcType=BIGINT}
     </select>
     <select id="selectByClientIdandUserId" resultMap="BaseResultMap" parameterType="com.huinfo.auth.as.model.AccessToken" >
         select 
         <include refid="Base_Column_List" />
         from accesstoken
-        where client_id = #{clientId,jdbcType=VARCHAR} 
+        where client_id = #{clientId,jdbcType=BIGINT}
         and resourceOwnerId = #{resourceownerid,jdbcType=VARCHAR}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >

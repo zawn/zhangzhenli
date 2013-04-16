@@ -46,7 +46,7 @@ public class TrustedTokenIssue extends OAuthIssue {
     private final String trustedDomain;
     private final String trustedUid;
 
-    public TrustedTokenIssue(HttpServletRequest request) {
+    public TrustedTokenIssue(HttpServletRequest request) throws OAuthProblemException {
         super(request, GrantType.TRUSTED_TOKEN);
         this.trustedToken = request.getParameter(OAuth.OAUTH_TRUSTED_TOKEN);
         this.trustedDomain = request.getParameter(OAuth.OAUTH_TRUSTED_DOMAIN);
@@ -58,9 +58,9 @@ public class TrustedTokenIssue extends OAuthIssue {
             throws OAuthProblemException {
         TrustedValidator validator;
         if (TrustedDomainType.SinaWeibo.toString().equals(trustedDomain)) {
-            validator = new SinaWeibo(trustedDomain, trustedToken, trustedUid, clientID);
+            validator = new SinaWeibo(trustedDomain, trustedToken, trustedUid, clientId);
         } else if (TrustedDomainType.TencentWeibo.toString().equals(trustedDomain)) {
-            validator = new TencentWeibo(trustedDomain, trustedToken, trustedUid, clientID);
+            validator = new TencentWeibo(trustedDomain, trustedToken, trustedUid, clientId);
         } else {
             throw OAuthProblemException.error("unsupported_trusted_domain");
         }
@@ -68,7 +68,7 @@ public class TrustedTokenIssue extends OAuthIssue {
         try {
             clientValidator(sqlSession);
             TrustedDomain tee = new TrustedDomain();
-            tee.setClientid(clientID);
+            tee.setClientid(clientId);
             tee.setDomain(this.trustedDomain);
             TrustedDomainMapper instance = sqlSession.getMapper(TrustedDomainMapper.class);
             List<TrustedDomain> result = instance.selectClientIDandTrustedDomain(tee);

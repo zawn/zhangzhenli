@@ -169,7 +169,7 @@ public class AccessTokenMapperTest {
         SqlSession sqlSession = DBSessionFactory.getSession();
         try {
             AccessTokenMapper mapper = sqlSession.getMapper(AccessTokenMapper.class);
-            List<AccessToken> record = mapper.selectByClientId("99998");
+            List<AccessToken> record = mapper.selectByClientId(99998L);
             System.out.println(record.toString());
         } finally {
             sqlSession.close();

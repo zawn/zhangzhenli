@@ -39,7 +39,7 @@ public class PasswordIssue extends OAuthIssue {
     private final String userName;
     private final String password;
 
-    public PasswordIssue(HttpServletRequest request) {
+    public PasswordIssue(HttpServletRequest request) throws OAuthProblemException {
         super(request, GrantType.PASSWORD);
         this.userName = request.getParameter(OAuth.OAUTH_USERNAME);
         this.password = request.getParameter(OAuth.OAUTH_PASSWORD);

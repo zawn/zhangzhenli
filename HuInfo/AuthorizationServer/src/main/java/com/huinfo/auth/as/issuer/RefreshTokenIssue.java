@@ -25,11 +25,15 @@ import com.huinfo.auth.as.model.AccessToken;
 import com.huinfo.auth.as.pojo.BaseAccessToken;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
+import org.apache.oltu.oauth2.as.issuer.MD5Generator;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.apache.oltu.oauth2.common.message.types.TokenType;
+import org.apache.oltu.oauth2.common.utils.OAuthUtils;
 
 /**
  *
@@ -40,7 +44,7 @@ public class RefreshTokenIssue extends OAuthIssue {
 
     private final String refreshToken;
 
-    public RefreshTokenIssue(HttpServletRequest request) {
+    public RefreshTokenIssue(HttpServletRequest request) throws OAuthProblemException {
         super(request, GrantType.REFRESH_TOKEN);
         this.refreshToken = request.getParameter(OAuth.OAUTH_REFRESH_TOKEN);
     }
@@ -53,7 +57,7 @@ public class RefreshTokenIssue extends OAuthIssue {
             clientValidator(sqlSession);
             AccessTokenMapper mapper = sqlSession.getMapper(AccessTokenMapper.class);
             AccessToken record = mapper.selectByRefreshToken(refreshToken);
-            if (record != null && record.getClientId().equals(clientID)) {
+            if (record != null && record.getClientId().equals(clientId)) {
                 userID = record.getResourceownerid();
                 return;
             }
@@ -66,9 +70,12 @@ public class RefreshTokenIssue extends OAuthIssue {
     @Override
     protected BaseAccessToken issue()
             throws OAuthSystemException {
-        BaseAccessToken sue = super.issue();
-        sue.setRefreshToken(null);
-        return sue;
+    	oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
+        BaseAccessToken at = new BaseAccessToken(oauthIssuerImpl.accessToken(), TokenType.BEARER.toString());
+        at.setExpiresIn(302400L);
+        at.setRefreshToken(null);
+        at.setScope(OAuthUtils.encodeScopes(scope));
+        return at;
     }
     
     

@@ -18,7 +18,7 @@ public interface AccessTokenMapper {
 
     AccessToken selectByAccessToken(String accessToken);
 
-    List<AccessToken> selectByClientId(String clientId);
+    List<AccessToken> selectByClientId(Long clientId);
 
     List<AccessToken> selectByClientIdandUserId(AccessToken accessToken);
 
