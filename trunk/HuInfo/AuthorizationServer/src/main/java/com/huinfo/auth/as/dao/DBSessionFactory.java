@@ -27,7 +27,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
  * @author ZhangZhenli
  */
 public class DBSessionFactory {
-    
+
     final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DBSessionFactory.class);
     private static String configFile = "mybatis-config.xml";
     private static String sqlFile = "oauth.sql";
@@ -35,7 +35,8 @@ public class DBSessionFactory {
     private static String environment;
     private static final String ENVIRONMENT_DEV = "Development";
     private static final String ENVIRONMENT_BAE = "BAE";
-    
+    private static final String ENVIRONMENT_ALIYUN = "Aliyun";
+
     static {
         // 根据系统属性判定运行环境;
         /**
@@ -69,15 +70,20 @@ public class DBSessionFactory {
          * BAE官方没有特殊声明其运行环境属性,故判断其VM类型
          */
         String property = System.getProperty("java.vm.name");
+        String osName = System.getProperty("os.name");
         //BAE:java.vm.name=OpenJDK 64-Bit Server VM,
         //Dev:java.vm.name=Java HotSpot(TM) 64-Bit Server VM,
         if (property.contains("Java HotSpot(TM)")) {
-            environment = ENVIRONMENT_DEV;
+            if (osName.contains("Windows Server 2008")) {
+                environment = ENVIRONMENT_ALIYUN;
+            } else {
+                environment = ENVIRONMENT_DEV;
+            }
         } else {
             environment = ENVIRONMENT_BAE;
         }
     }
-    
+
     private static void doCreateTable() {
         try {
             Connection connection = sqlSessionFactory.openSession().getConnection();
@@ -111,7 +117,7 @@ public class DBSessionFactory {
      */
     private DBSessionFactory() {
     }
-    
+
     private static synchronized void init() {
         if (sqlSessionFactory == null) {
             InputStream inputStream = null;
@@ -130,7 +136,7 @@ public class DBSessionFactory {
             }
         }
     }
-    
+
     public static SqlSession getSession() {
         if (sqlSessionFactory == null) {
             init();
