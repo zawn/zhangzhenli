@@ -42,7 +42,6 @@
     </developers>
     
     <modules>
-        <module>Common</module>
         <module>AuthorizationServer</module>
     </modules>
     
