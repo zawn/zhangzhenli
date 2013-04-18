@@ -30,6 +30,7 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import com.huinfo.auth.as.dao.DBSessionFactory;
 import com.huinfo.auth.as.dao.TrustedDomainMapper;
 import com.huinfo.auth.as.issuer.domain.SinaWeibo;
+import com.huinfo.auth.as.issuer.domain.TencentConnect;
 import com.huinfo.auth.as.issuer.domain.TencentWeibo;
 import com.huinfo.auth.as.issuer.domain.TrustedDomainType;
 import com.huinfo.auth.as.issuer.domain.TrustedValidator;
@@ -46,7 +47,8 @@ public class TrustedTokenIssue extends OAuthIssue {
     private final String trustedDomain;
     private final String trustedUid;
 
-    public TrustedTokenIssue(HttpServletRequest request) throws OAuthProblemException {
+    public TrustedTokenIssue(HttpServletRequest request)
+            throws OAuthProblemException {
         super(request, GrantType.TRUSTED_TOKEN);
         this.trustedToken = request.getParameter(OAuth.OAUTH_TRUSTED_TOKEN);
         this.trustedDomain = request.getParameter(OAuth.OAUTH_TRUSTED_DOMAIN);
@@ -61,6 +63,8 @@ public class TrustedTokenIssue extends OAuthIssue {
             validator = new SinaWeibo(trustedDomain, trustedToken, trustedUid, clientId);
         } else if (TrustedDomainType.TencentWeibo.toString().equals(trustedDomain)) {
             validator = new TencentWeibo(trustedDomain, trustedToken, trustedUid, clientId);
+        } else if (TrustedDomainType.TencentConnect.toString().equals(trustedDomain)) {
+            validator = new TencentConnect(trustedDomain, trustedToken, trustedUid, clientId);
         } else {
             throw OAuthProblemException.error("unsupported_trusted_domain");
         }

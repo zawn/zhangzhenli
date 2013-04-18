@@ -14,26 +14,12 @@
  * limitations under the License.
  */
 
-package com.huinfo.auth.as.issuer.domain;
+package com.huinfo.auth.as.servlet;
 
 /**
  *
  * @author ZhangZhenli <zhangzhenli@live.com>
  */
-public enum TrustedDomainType {
+public class ResourcesServlet {
 
-    TencentWeibo("https://open.t.qq.com/api/"),
-    SinaWeibo("https://api.weibo.com/2/"), 
-    TencentConnect("https://connect.qq.com/");
-    
-    private String grantType;
-
-    TrustedDomainType(String grantType) {
-        this.grantType = grantType;
-    }
-
-    @Override
-    public String toString() {
-        return grantType;
-    }
 }

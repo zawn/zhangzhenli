@@ -8,6 +8,14 @@
         <servlet-name>UserServlet</servlet-name>
         <servlet-class>com.huinfo.auth.as.servlet.UserServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SMSCheckCode</servlet-name>
+        <servlet-class>com.huinfo.auth.as.servlet.CheckCodeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AccountServlet</servlet-name>
+        <servlet-class>com.huinfo.auth.as.servlet.AccountServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>OAuth2.0</servlet-name>
         <url-pattern>/o2/*</url-pattern>
@@ -15,6 +23,14 @@
     <servlet-mapping>
         <servlet-name>UserServlet</servlet-name>
         <url-pattern>/user</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SMSCheckCode</servlet-name>
+        <url-pattern>/checkcode</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AccountServlet</servlet-name>
+        <url-pattern>/account</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
