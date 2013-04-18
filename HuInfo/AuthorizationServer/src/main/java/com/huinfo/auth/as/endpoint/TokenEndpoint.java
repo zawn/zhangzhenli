@@ -55,7 +55,6 @@ public class TokenEndpoint extends AbstractEndpoint {
             OAuthTokenRequest auth = null;
             BaseAccessToken accessToken;
             OAuthIssue oauthIssue = null;
-            OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
             try {
                 auth = new OAuthTokenRequest(request);
                 String grantTypeString = auth.getGrantType();
