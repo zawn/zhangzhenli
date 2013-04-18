@@ -18,27 +18,39 @@ package com.huinfo.auth.as.endpoint;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.huinfo.auth.as.dao.AccessTokenMapper;
+import com.huinfo.auth.as.dao.DBSessionFactory;
 import com.huinfo.auth.as.issuer.ClientIssue;
 import com.huinfo.auth.as.issuer.OAuthIssue;
 import com.huinfo.auth.as.issuer.PasswordIssue;
 import com.huinfo.auth.as.issuer.RefreshTokenIssue;
 import com.huinfo.auth.as.issuer.TrustedTokenIssue;
+import com.huinfo.auth.as.model.AccessToken;
 import com.huinfo.auth.as.pojo.BaseAccessToken;
+import com.huinfo.auth.as.utils.ParameterUtil;
+import com.huinfo.auth.as.utils.ParameterUtil.ParameterException;
+import com.huinfo.auth.as.utils.ResponseUtil;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
+import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.oltu.oauth2.common.utils.OAuthUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 /**
  *
@@ -118,6 +130,27 @@ public class TokenEndpoint extends AbstractEndpoint {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doPost(request, response);
+        try {
+            String[] params = ParameterUtil.getParamNotNull(request, OAuth.OAUTH_RESOURCE_ID, OAuth.OAUTH_ACCESS_TOKEN);
+            // TODO 验证资源服务器是否有效
+            SqlSession session = DBSessionFactory.getSession();
+            AccessTokenMapper mapper = session.getMapper(AccessTokenMapper.class);
+            AccessToken at = mapper.selectByAccessToken(params[1]);
+            if (at != null) {
+                JSONObject jSONObject = new JSONObject();
+                jSONObject.put(OAuth.OAUTH_ACCESS_TOKEN, at.getAccessToken());
+                jSONObject.put(OAuth.OAUTH_TOKEN_TYPE, at.getTokenType());
+                jSONObject.put(OAuth.OAUTH_CREATE_AT, at.getModificationdate().getTime() / 1000);
+                jSONObject.put(OAuth.OAUTH_EXPIRES_IN, at.getExpiresIn());
+                jSONObject.put(OAuth.OAUTH_USER_ID, at.getResourceownerid());
+                jSONObject.put(OAuth.OAUTH_CLIENT_ID, at.getClientId());
+                ResponseUtil.handlerSuccess(response, jSONObject);
+            }else{
+                ResponseUtil.handlerError(response, "the access token is invalid");
+            }
+        } catch (JSONException ex) {
+        } catch (ParameterException ex) {
+            ResponseUtil.handlerError(response, ex);
+        }
     }
 }
