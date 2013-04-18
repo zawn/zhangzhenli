@@ -18,8 +18,6 @@ package com.huinfo.auth.as.endpoint;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,9 +36,6 @@ import com.huinfo.auth.as.utils.ParameterUtil;
 import com.huinfo.auth.as.utils.ParameterUtil.ParameterException;
 import com.huinfo.auth.as.utils.ResponseUtil;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.oltu.oauth2.as.issuer.MD5Generator;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.OAuth;
