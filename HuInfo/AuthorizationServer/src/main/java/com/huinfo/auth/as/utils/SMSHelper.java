@@ -16,7 +16,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.sun.imageio.plugins.common.I18N;
 import org.apache.ibatis.io.Resources;
 
 /**

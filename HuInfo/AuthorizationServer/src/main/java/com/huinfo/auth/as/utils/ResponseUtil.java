@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jettison.json.JSONObject;
+
 /**
  *
  * @author ZhangZhenli <zhangzhenli@live.com>
@@ -50,6 +52,15 @@ public class ResponseUtil {
         response.setContentType("application/json; charset=utf-8");
         PrintWriter writer = response.getWriter();
         writer.print("{\"error\"=\"0\"}");
+        writer.flush();
+        writer.close();
+    }
+
+    public static void handlerSuccess(HttpServletResponse response, JSONObject jSONObject)
+            throws IOException {
+        response.setContentType("application/json; charset=utf-8");
+        PrintWriter writer = response.getWriter();
+        writer.print(jSONObject.toString());
         writer.flush();
         writer.close();
     }
