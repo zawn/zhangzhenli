@@ -52,6 +52,13 @@ public abstract class TrustedValidator {
         this.trustedToken = trustedToken;
     }
 
+    /**
+     * 
+     * @param attrib 从数据库中查询到第三方相关参数如:AppKey等
+     * 
+     * @throws OAuthProblemException
+     * @throws OAuthRuntimeException 
+     */
     public abstract void validatorFromDomain(Map<String, Object> attrib)
             throws OAuthProblemException, OAuthRuntimeException;
 

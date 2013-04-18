@@ -70,7 +70,7 @@ public class TencentWeibo extends TrustedValidator {
         try {
             Map<String, Object> attrib = new HashMap<String, Object>();
             attrib.put("format", "json");
-            attrib.put("oauth_consumer_key", at.get("appkey"));
+            attrib.put("oauth_consumer_key", at.get("AppKey"));
             attrib.put("access_token", trustedToken);
             attrib.put("openid", trustedUid);
             attrib.put("oauth_version", "2.a");
