@@ -81,7 +81,7 @@ public class TrustedTokenIssue extends OAuthIssue {
                 hashMap.put(td.getAttributeName(), td.getAttributeValue());
             }
             validator.validatorFromDomain(hashMap);
-            userID = trustedUid;
+            userID = trustedUid + "@" + trustedDomain;
         } finally {
             sqlSession.close();
         }

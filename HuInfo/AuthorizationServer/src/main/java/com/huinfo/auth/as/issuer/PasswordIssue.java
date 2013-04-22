@@ -56,7 +56,7 @@ public class PasswordIssue extends OAuthIssue {
             if (resourceOwn != null) {
                 String digestClient = SecretDigest.digestClient(password);
                 if (digestClient != null && digestClient.equals(resourceOwn.getPassword())) {
-                    userID = resourceOwn.getUsername();
+                    userID = resourceOwn.getUsername()+"@https://huinfo.com/auth/";
                     return;
                 }
             }

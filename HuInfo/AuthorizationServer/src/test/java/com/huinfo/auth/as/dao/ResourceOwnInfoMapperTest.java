@@ -112,7 +112,6 @@ public class ResourceOwnInfoMapperTest {
     /**
      * Test of selectByUserID method, of class ResourceOwnInfoMapper.
      */
-    @Test
     public void testSelectByUserID() {
         System.out.println("selectByUserID");
         SqlSession sqlSession = DBSessionFactory.getSession();
