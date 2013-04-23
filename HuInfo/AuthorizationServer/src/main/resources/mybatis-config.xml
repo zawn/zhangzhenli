@@ -13,7 +13,7 @@
         </environment>
         <environment id="BAE">
             <transactionManager type="JDBC" />
-            <dataSource type="POOLED">
+            <dataSource type="UNPOOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver" />
                 <property name="url" value="jdbc:mysql://sqld.duapp.com:4050/hZbDVmkJtTzUSSegQHdE?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull" />
                 <property name="username" value="jmGBIF9XMW93hTDIann17nBj" />
@@ -27,14 +27,15 @@
                 <property name="url" value="jdbc:mysql://localhost:3306/oauth?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull" />
                 <property name="username" value="root" />
                 <property name="password" value="ywx2012" />
-                <!--<property name="driver.encoding" value="UTF8" />
-                <property name="poolMaximumActiveConnections" value="20"/>
-                <property name="poolMaximumIdleConnections" value="5"/>
-                <property name="poolMaximumCheckoutTime" value="20000"/>-->
+                <property name="poolMaximumActiveConnections" value="20" />
+                <property name="poolMaximumIdleConnections" value="5" />
+                <property name="poolMaximumCheckoutTime" value="20000" />
+                <property name="poolTimeToWait" value="20000" />
+                <!--<property name="driver.encoding" value="UTF8" />-->
                 <property name="poolTimeToWait" value="20000"/>
                 <property name="poolPingQuery" value="select * from ibatis"/>
                 <property name="poolPingEnabled" value="true"/>
-                <property name="poolPingConnectionsNotUsedFor" value="18000"/>
+                <property name="poolPingConnectionsNotUsedFor" value="16000"/>
             </dataSource>
         </environment>
     </environments>

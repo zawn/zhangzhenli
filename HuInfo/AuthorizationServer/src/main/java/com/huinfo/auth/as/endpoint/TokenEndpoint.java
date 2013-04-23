@@ -128,20 +128,24 @@ public class TokenEndpoint extends AbstractEndpoint {
         try {
             String[] params = ParameterUtil.getParamNotNull(request, OAuth.OAUTH_RESOURCE_ID, OAuth.OAUTH_ACCESS_TOKEN);
             // TODO 验证资源服务器是否有效
-            SqlSession session = DBSessionFactory.getSession();
-            AccessTokenMapper mapper = session.getMapper(AccessTokenMapper.class);
-            AccessToken at = mapper.selectByAccessToken(params[1]);
-            if (at != null) {
-                JSONObject jSONObject = new JSONObject();
-                jSONObject.put(OAuth.OAUTH_ACCESS_TOKEN, at.getAccessToken());
-                jSONObject.put(OAuth.OAUTH_TOKEN_TYPE, at.getTokenType());
-                jSONObject.put(OAuth.OAUTH_CREATE_AT, at.getModificationdate().getTime() / 1000);
-                jSONObject.put(OAuth.OAUTH_EXPIRES_IN, at.getExpiresIn());
-                jSONObject.put(OAuth.OAUTH_USER_ID, at.getResourceownerid());
-                jSONObject.put(OAuth.OAUTH_CLIENT_ID, at.getClientId());
-                ResponseUtil.handlerSuccess(response, jSONObject);
-            }else{
-                ResponseUtil.handlerError(response, "the access token is invalid");
+            SqlSession sqlSession = DBSessionFactory.getSession();
+            try {
+                AccessTokenMapper mapper = sqlSession.getMapper(AccessTokenMapper.class);
+                AccessToken at = mapper.selectByAccessToken(params[1]);
+                if (at != null) {
+                    JSONObject jSONObject = new JSONObject();
+                    jSONObject.put(OAuth.OAUTH_ACCESS_TOKEN, at.getAccessToken());
+                    jSONObject.put(OAuth.OAUTH_TOKEN_TYPE, at.getTokenType());
+                    jSONObject.put(OAuth.OAUTH_CREATE_AT, at.getModificationdate().getTime() / 1000);
+                    jSONObject.put(OAuth.OAUTH_EXPIRES_IN, at.getExpiresIn());
+                    jSONObject.put(OAuth.OAUTH_USER_ID, at.getResourceownerid());
+                    jSONObject.put(OAuth.OAUTH_CLIENT_ID, at.getClientId());
+                    ResponseUtil.handlerSuccess(response, jSONObject);
+                } else {
+                    ResponseUtil.handlerError(response, "the access token is invalid");
+                }
+            } finally {
+                sqlSession.close();
             }
         } catch (JSONException ex) {
         } catch (ParameterException ex) {
