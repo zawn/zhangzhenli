@@ -35,22 +35,22 @@ import static org.junit.Assert.*;
  * @author ZhangZhenli <zhangzhenli@live.com>
  */
 public class TrustedDomainMapperTest {
-    
+
     public TrustedDomainMapperTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -103,17 +103,17 @@ public class TrustedDomainMapperTest {
             sqlSession.close();
         }
     }
-    
+
     public class TrustedDomainMapperImpl implements TrustedDomainMapper {
-        
+
         public int insert(TrustedDomain record) {
             return 0;
         }
-        
+
         public int insertSelective(TrustedDomain record) {
             return 0;
         }
-        
+
         public List<TrustedDomain> selectClientIDandTrustedDomain(TrustedDomain record) {
             return null;
         }

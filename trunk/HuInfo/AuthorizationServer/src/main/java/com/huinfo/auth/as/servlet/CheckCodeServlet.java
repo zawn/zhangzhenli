@@ -63,7 +63,7 @@ public class CheckCodeServlet extends HttpServlet {
         String checkCode = checkCodeAndTempToken.get("checkCode");
         String tempToken = checkCodeAndTempToken.get("tempToken");
         //通过短信网关发送短信验证码，如果失败则返回相应的错误码
-        if (!CheckCode.sendSMSCheckCode(phoneNumber, checkCode,request.getRemoteAddr())) {
+        if (!CheckCode.sendSMSCheckCode(phoneNumber, checkCode, request.getRemoteAddr())) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             PrintWriter writer = response.getWriter();
             writer.print("{\"error\"=\"undone_request\",\"error_description\"=\"Unable to send verification code\"}");

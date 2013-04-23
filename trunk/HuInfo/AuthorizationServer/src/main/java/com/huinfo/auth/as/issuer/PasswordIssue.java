@@ -39,7 +39,8 @@ public class PasswordIssue extends OAuthIssue {
     private final String userName;
     private final String password;
 
-    public PasswordIssue(HttpServletRequest request) throws OAuthProblemException {
+    public PasswordIssue(HttpServletRequest request)
+            throws OAuthProblemException {
         super(request, GrantType.PASSWORD);
         this.userName = request.getParameter(OAuth.OAUTH_USERNAME);
         this.password = request.getParameter(OAuth.OAUTH_PASSWORD);
@@ -56,7 +57,7 @@ public class PasswordIssue extends OAuthIssue {
             if (resourceOwn != null) {
                 String digestClient = SecretDigest.digestClient(password);
                 if (digestClient != null && digestClient.equals(resourceOwn.getPassword())) {
-                    userID = resourceOwn.getUsername()+"@https://huinfo.com/auth/";
+                    userID = resourceOwn.getUsername() + "@https://huinfo.com/auth/";
                     return;
                 }
             }

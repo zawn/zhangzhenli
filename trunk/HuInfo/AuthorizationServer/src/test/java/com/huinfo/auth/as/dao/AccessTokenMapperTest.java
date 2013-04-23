@@ -181,7 +181,7 @@ public class AccessTokenMapperTest {
      */
     @Test
     public void testSelectByClientIdandUserId() {
-         System.out.println("testSelectByClientIdandUserId");
+        System.out.println("testSelectByClientIdandUserId");
         SqlSession sqlSession = DBSessionFactory.getSession();
         try {
             AccessTokenMapper mapper = sqlSession.getMapper(AccessTokenMapper.class);

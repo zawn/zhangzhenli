@@ -40,11 +40,12 @@ import org.apache.oltu.oauth2.common.utils.OAuthUtils;
  * @author ZhangZhenli <zhangzhenli@live.com>
  */
 public class RefreshTokenIssue extends OAuthIssue {
-    protected static final Logger logger = Logger.getLogger(RefreshTokenIssue.class);
 
+    protected static final Logger logger = Logger.getLogger(RefreshTokenIssue.class);
     private final String refreshToken;
 
-    public RefreshTokenIssue(HttpServletRequest request) throws OAuthProblemException {
+    public RefreshTokenIssue(HttpServletRequest request)
+            throws OAuthProblemException {
         super(request, GrantType.REFRESH_TOKEN);
         this.refreshToken = request.getParameter(OAuth.OAUTH_REFRESH_TOKEN);
     }
@@ -70,15 +71,13 @@ public class RefreshTokenIssue extends OAuthIssue {
     @Override
     protected BaseAccessToken issue()
             throws OAuthSystemException {
-    	oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
+        oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
         BaseAccessToken at = new BaseAccessToken(oauthIssuerImpl.accessToken(), TokenType.BEARER.toString());
         at.setExpiresIn(302400L);
         at.setRefreshToken(null);
         at.setScope(OAuthUtils.encodeScopes(scope));
         return at;
     }
-    
-    
 
     @Override
     protected void storage(BaseAccessToken at)
