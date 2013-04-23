@@ -23,9 +23,8 @@ package com.huinfo.auth.as.issuer.domain;
 public enum TrustedDomainType {
 
     TencentWeibo("https://open.t.qq.com/api/"),
-    SinaWeibo("https://api.weibo.com/2/"), 
+    SinaWeibo("https://api.weibo.com/2/"),
     TencentConnect("https://connect.qq.com/");
-    
     private String grantType;
 
     TrustedDomainType(String grantType) {

@@ -20,5 +20,5 @@ package com.huinfo.auth.as.endpoint;
  *
  * @author ZhangZhenli <zhangzhenli@live.com>
  */
-public class AuthorizationEndpoint extends AbstractEndpoint{
+public class AuthorizationEndpoint extends AbstractEndpoint {
 }

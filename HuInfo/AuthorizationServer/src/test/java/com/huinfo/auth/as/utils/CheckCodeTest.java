@@ -27,18 +27,18 @@ import static org.junit.Assert.*;
  * @author ZhangZhenli <zhangzhenli@live.com>
  */
 public class CheckCodeTest {
-    
+
     public CheckCodeTest() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -51,7 +51,8 @@ public class CheckCodeTest {
     }
 
     /**
-     * Test of testCheckuInfoNameAnduInfoPhotoAndOther method, of class CheckCode.
+     * Test of testCheckuInfoNameAnduInfoPhotoAndOther method, of class
+     * CheckCode.
      */
     @Test
     public void testTestCheckuInfoNameAnduInfoPhotoAndOther() {
@@ -118,8 +119,6 @@ public class CheckCodeTest {
      */
     @Test
     public void testSendSMSCheckCode() {
-        
-        
     }
 
     /**
