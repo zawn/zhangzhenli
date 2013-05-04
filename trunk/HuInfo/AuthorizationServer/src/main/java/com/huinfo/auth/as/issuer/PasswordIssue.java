@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.huinfo.auth.as.dao.DBSessionFactory;
 import com.huinfo.auth.as.dao.ResourceOwnMapper;
+import com.huinfo.auth.as.issuer.domain.TrustedDomainType;
 import com.huinfo.auth.as.model.ResourceOwn;
 import com.huinfo.auth.as.utils.SecretDigest;
 import org.apache.ibatis.session.SqlSession;
@@ -57,7 +58,7 @@ public class PasswordIssue extends OAuthIssue {
             if (resourceOwn != null) {
                 String digestClient = SecretDigest.digestClient(password);
                 if (digestClient != null && digestClient.equals(resourceOwn.getPassword())) {
-                    userID = resourceOwn.getUsername() + "@https://huinfo.com/auth/";
+                    userID = resourceOwn.getUsername() + "@" + TrustedDomainType.Huinfo;
                     return;
                 }
             }
